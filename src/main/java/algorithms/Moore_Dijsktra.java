@@ -43,7 +43,7 @@ public class Moore_Dijsktra extends Algo{
         
         distance.put(startNode.getId(), (double)0);
 
-        for (String key : graph.keySet()) {
+        for (int i = 0; i<graph.size(); i++) {
 
             double min = INF;
             AnchorDTO smallestNode = null;

@@ -49,7 +49,7 @@ public class Moore_Dijsktra_RB_Tree extends Algo{
         RbTree.add(new Pair(distance.get(startNode.getId()), startNode));
         
 
-        for (String key : graph.keySet()) {
+        for (int i = 0; i<graph.size(); i++) {
 
             // find min
             if(RbTree.isEmpty()) break;
