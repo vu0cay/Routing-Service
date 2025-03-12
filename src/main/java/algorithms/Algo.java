@@ -20,7 +20,7 @@ public class Algo {
     protected  static final int NOT_VISITED = -1;
     protected  static final int IN_PROGRESS = 0;
     protected  static final int VISITED = 1;
-    protected  static final long INF = 999999999;
+    protected  static final double INF = 999999999;
     
     public Algo() {
         this.mark = new HashMap<>();

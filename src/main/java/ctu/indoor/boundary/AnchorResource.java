@@ -9,8 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import algorithms.BFS;
 import algorithms.DFS;
+import algorithms.Moore_Dijsktra;
+import algorithms.Moore_Dijsktra_RB_Tree;
 import ctu.indoor.dto.AnchorDTO;
+import ctu.indoor.dto.CustomResult.CustomRes;
 import ctu.indoor.dto.GraphDTO;
 import ctu.indoor.dto.PathRequestDTO;
 import ctu.indoor.model.Anchor;
@@ -36,7 +40,6 @@ import jakarta.ws.rs.core.Response;
 public class AnchorResource {
     private  final AnchorService anchorService;
     
-
     @Inject
     public AnchorResource(AnchorService anchorService) {
         this.anchorService = anchorService;
@@ -72,10 +75,106 @@ public class AnchorResource {
         
         DFS dfs = new DFS(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
         
-        // dfs.execute();
-        // List<AnchorPathDTO> path =  dfs.execute();
+        long startTime = System.nanoTime();
+        dfs.execute();        
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+
+        CustomRes res = dfs.getPath();
         
-        return Response.ok(dfs.execute()).status(200).build();
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        
+    }
+
+    @POST
+    @Path("/BFS")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllPathBFS(PathRequestDTO requestDTO) {
+        
+        if (requestDTO == null || requestDTO.getStartNode() == null || requestDTO.getEndNode() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Invalid request payload")
+                           .build();
+        }
+
+
+        List<Anchor> anchors = anchorService.findAll();
+        GraphDTO graphIns = new GraphDTO(anchors);
+        Map<String,AnchorDTO> graph = graphIns.getGraph();
+        
+        
+        BFS bfs = new BFS(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
+        
+        long startTime = System.nanoTime();
+        bfs.execute();        
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+
+        CustomRes res = bfs.getPath();
+        
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        
+    }
+
+
+    @POST
+    @Path("/Moore_Dijsktra")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllPathMoore_Dijsktra(PathRequestDTO requestDTO) {
+        
+        if (requestDTO == null || requestDTO.getStartNode() == null || requestDTO.getEndNode() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Invalid request payload")
+                           .build();
+        }
+
+
+        List<Anchor> anchors = anchorService.findAll();
+        GraphDTO graphIns = new GraphDTO(anchors);
+        Map<String,AnchorDTO> graph = graphIns.getGraph();
+        
+        
+        Moore_Dijsktra dijsktra = new Moore_Dijsktra(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
+        
+        long startTime = System.nanoTime();
+        dijsktra.execute();        
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+
+        CustomRes res = dijsktra.getPath();
+        
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        
+    }
+
+
+    @POST
+    @Path("/Moore_Dijsktra_RBT")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllPathMoore_Dijsktra_RBT(PathRequestDTO requestDTO) {
+        
+        if (requestDTO == null || requestDTO.getStartNode() == null || requestDTO.getEndNode() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Invalid request payload")
+                           .build();
+        }
+
+
+        List<Anchor> anchors = anchorService.findAll();
+        GraphDTO graphIns = new GraphDTO(anchors);
+        Map<String,AnchorDTO> graph = graphIns.getGraph();
+        
+        
+        Moore_Dijsktra_RB_Tree dijsktra = new Moore_Dijsktra_RB_Tree(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
+        
+        long startTime = System.nanoTime();
+        dijsktra.execute();        
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+
+        CustomRes res = dijsktra.getPath();
+        
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
         
     }
 }

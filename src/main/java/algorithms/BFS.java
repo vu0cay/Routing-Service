@@ -7,9 +7,10 @@ package algorithms;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+import java.util.Queue;
 
 import org.neo4j.driver.types.Point;
 
@@ -22,12 +23,12 @@ import ctu.indoor.model.Anchor;
  *
  * @author ADMIN
  */
-public class DFS extends Algo{
+public class BFS extends Algo{
     private final Map<String, AnchorDTO> graph;
     private final AnchorDTO startNode;
     private final AnchorDTO endNode;
 
-    public DFS(Map<String, AnchorDTO> graph, AnchorDTO startNode, AnchorDTO endNode) {
+    public BFS(Map<String, AnchorDTO> graph, AnchorDTO startNode, AnchorDTO endNode) {
         super();
         this.graph = graph;
         this.startNode = startNode;
@@ -42,11 +43,11 @@ public class DFS extends Algo{
             parent.put(key, "");
         });
         
-        Stack<AnchorDTO> st = new Stack<>();
-        st.push(startNode);
+        Queue<AnchorDTO> que = new LinkedList<>();
+        que.add(startNode);
 
-        while(!st.isEmpty()) {
-            AnchorDTO processingNode = st.pop();
+        while(!que.isEmpty()) {
+            AnchorDTO processingNode = que.poll();
             if(processingNode.getId().equals(endNode.getId())) break;
 
             processingNode.getNeigbors().forEach((nei) -> {
@@ -54,7 +55,7 @@ public class DFS extends Algo{
                 double weight = nei.getDistance();
 
                 if(mark.get(neigborNode.getId()) == NOT_VISITED) {
-                    st.push(new AnchorDTO(neigborNode));
+                    que.add(new AnchorDTO(neigborNode));
                     parent.put(neigborNode.getId(), processingNode.getId());
                     distance.put(neigborNode.getId(), distance.get(processingNode.getId()) + weight);
                 }
@@ -79,6 +80,4 @@ public class DFS extends Algo{
 
         return new CustomRes(distance.get(endNode.getId()), anchors, "");
     }
-
-
 }

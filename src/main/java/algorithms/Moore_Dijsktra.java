@@ -9,25 +9,23 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.neo4j.driver.types.Point;
 
 import ctu.indoor.dto.AnchorDTO;
 import ctu.indoor.dto.CustomResult.AnchorPath;
 import ctu.indoor.dto.CustomResult.CustomRes;
-import ctu.indoor.model.Anchor;
 
 /**
  *
  * @author ADMIN
  */
-public class DFS extends Algo{
+public class Moore_Dijsktra extends Algo{
     private final Map<String, AnchorDTO> graph;
     private final AnchorDTO startNode;
     private final AnchorDTO endNode;
 
-    public DFS(Map<String, AnchorDTO> graph, AnchorDTO startNode, AnchorDTO endNode) {
+    public Moore_Dijsktra(Map<String, AnchorDTO> graph, AnchorDTO startNode, AnchorDTO endNode) {
         super();
         this.graph = graph;
         this.startNode = startNode;
@@ -36,34 +34,51 @@ public class DFS extends Algo{
 
 
     public void execute() {
+        
         graph.keySet().forEach(key -> {
             mark.put(key, NOT_VISITED);
-            distance.put(key, (double)0);
+            distance.put(key, INF);
             parent.put(key, "");
         });
         
-        Stack<AnchorDTO> st = new Stack<>();
-        st.push(startNode);
+        distance.put(startNode.getId(), (double)0);
 
-        while(!st.isEmpty()) {
-            AnchorDTO processingNode = st.pop();
-            if(processingNode.getId().equals(endNode.getId())) break;
+        for (String key : graph.keySet()) {
 
-            processingNode.getNeigbors().forEach((nei) -> {
-                Anchor neigborNode = nei.getTarget();
-                double weight = nei.getDistance();
+            double min = INF;
+            AnchorDTO smallestNode = null;
 
-                if(mark.get(neigborNode.getId()) == NOT_VISITED) {
-                    st.push(new AnchorDTO(neigborNode));
-                    parent.put(neigborNode.getId(), processingNode.getId());
-                    distance.put(neigborNode.getId(), distance.get(processingNode.getId()) + weight);
+            for (Map.Entry<String, AnchorDTO> entry : graph.entrySet()) {
+                String k = entry.getKey();
+                AnchorDTO v = entry.getValue();
+        
+                if (distance.get(k) < min && mark.get(k) == NOT_VISITED) {
+                    min = distance.get(k);
+                    smallestNode = new AnchorDTO(v);
                 }
-            });
+            }
 
-            mark.put(processingNode.getId(), VISITED);
+            if(smallestNode == null || smallestNode.getId().equals(endNode.getId())) break;
+            
+            mark.put(smallestNode.getId(), IN_PROGRESS);
+
+            for (var neighbor : smallestNode.getNeigbors()) {
+                var isUnvisitNode = mark.get(neighbor.getTarget().getId()) == NOT_VISITED;
+                var isBetterPath = distance.get(neighbor.getTarget().getId()) > distance.get(smallestNode.getId()) + neighbor.getDistance();
+
+                if(isUnvisitNode && isBetterPath) {
+                    double optimalPath = distance.get(smallestNode.getId()) + neighbor.getDistance();
+
+                    distance.put(neighbor.getTarget().getId(), optimalPath); 
+                    parent.put(neighbor.getTarget().getId(), smallestNode.getId());
+
+                }
+            }
+
+            mark.put(smallestNode.getId(), VISITED);
+
+
         }
-
-
     }
 
     public CustomRes getPath() {
@@ -79,6 +94,4 @@ public class DFS extends Algo{
 
         return new CustomRes(distance.get(endNode.getId()), anchors, "");
     }
-
-
 }
