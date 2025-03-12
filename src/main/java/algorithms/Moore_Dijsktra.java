@@ -34,7 +34,6 @@ public class Moore_Dijsktra extends Algo{
 
 
     public void execute() {
-        
         graph.keySet().forEach(key -> {
             mark.put(key, NOT_VISITED);
             distance.put(key, INF);
@@ -74,10 +73,7 @@ public class Moore_Dijsktra extends Algo{
 
                 }
             }
-
             mark.put(smallestNode.getId(), VISITED);
-
-
         }
     }
 
@@ -92,6 +88,6 @@ public class Moore_Dijsktra extends Algo{
             trackNode = graph.get(parent.get(trackNode.getId()));
         }
 
-        return new CustomRes(distance.get(endNode.getId()), anchors, "");
+        return new CustomRes(distance.get(endNode.getId()), anchors, "", null);
     }
 }

@@ -9,11 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.neo4j.driver.internal.InternalPoint2D;
+import org.neo4j.driver.types.Point;
+
 import algorithms.BFS;
 import algorithms.DFS;
 import algorithms.Moore_Dijsktra;
 import algorithms.Moore_Dijsktra_RB_Tree;
+import algorithms.PathDirectionalChecker;
 import ctu.indoor.dto.AnchorDTO;
+import ctu.indoor.dto.CustomResult.AnchorPath;
 import ctu.indoor.dto.CustomResult.CustomRes;
 import ctu.indoor.dto.GraphDTO;
 import ctu.indoor.dto.PathRequestDTO;
@@ -34,7 +39,7 @@ import jakarta.ws.rs.core.Response;
  * @author ADMIN
  */
 @ApplicationScoped
-@Path("anchors")
+@Path("Graph")
 @PermitAll
 // @Transactional(SUPPORTS)
 public class AnchorResource {
@@ -82,7 +87,7 @@ public class AnchorResource {
 
         CustomRes res = dfs.getPath();
         
-        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns", null)).status(200).build();
         
     }
 
@@ -112,13 +117,13 @@ public class AnchorResource {
 
         CustomRes res = bfs.getPath();
         
-        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns", null)).status(200).build();
         
     }
 
 
     @POST
-    @Path("/Moore_Dijsktra")
+    @Path("/moore-dijsktra")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllPathMoore_Dijsktra(PathRequestDTO requestDTO) {
         
@@ -142,8 +147,80 @@ public class AnchorResource {
         long duration = endTime - startTime;
 
         CustomRes res = dijsktra.getPath();
+
+        List<AnchorPath> paths = res.paths();
+        List<String> direction = new ArrayList<>();
+        // paths.forEach((pt) -> {
+        for(int index = paths.size() - 1; index>=0; index--) {
+            // int index = paths.indexOf(pt);
+            if(index == paths.size() - 1) {
+                direction.add("Go straight");
+            } else if(index == 0) {
+                direction.add("Finish");
+            }
+            else{
+                var previous = paths.get(index - 1);
+                var pt = paths.get(index);
+                var next = paths.get(index + 1);
+                Point A = new InternalPoint2D(7203, previous.geometryX().doubleValue(), previous.geometryY().doubleValue());
+                Point B = new InternalPoint2D(7203, pt.geometryX().doubleValue(), pt.geometryY().doubleValue());
+                Point C = new InternalPoint2D(7203, next.geometryX().doubleValue(), next.geometryY().doubleValue());
+
+                var direct = PathDirectionalChecker.checkDirection(A, B , C);
+                direction.add(direct);
+            }
+        }
+
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns",direction)).status(200).build();
         
-        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+    }
+
+    @POST
+    @Path("/Moore_Dijsktra_with_direction")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllPathMoore_Dijsktra_Direction(PathRequestDTO requestDTO) {
+        
+        if (requestDTO == null || requestDTO.getStartNode() == null || requestDTO.getEndNode() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Invalid request payload")
+                           .build();
+        }
+
+        List<Anchor> anchors = anchorService.findAll();
+        GraphDTO graphIns = new GraphDTO(anchors);
+        Map<String,AnchorDTO> graph = graphIns.getGraph();
+        
+        
+        Moore_Dijsktra dijsktra = new Moore_Dijsktra(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
+        
+        dijsktra.execute();        
+
+        CustomRes res = dijsktra.getPath();
+        List<AnchorPath> paths = res.paths();
+
+        List<String> direction = new ArrayList<>();
+        // paths.forEach((pt) -> {
+        for(int index = paths.size() - 1; index>=0; index--) {
+            // int index = paths.indexOf(pt);
+            if(index == paths.size() - 1) {
+                direction.add("Go straight");
+            } else if(index == 0) {
+                direction.add("Finish");
+            }
+            else{
+                var previous = paths.get(index - 1);
+                var pt = paths.get(index);
+                var next = paths.get(index + 1);
+                Point A = new InternalPoint2D(7203, previous.geometryX().doubleValue(), previous.geometryY().doubleValue());
+                Point B = new InternalPoint2D(7203, pt.geometryX().doubleValue(), pt.geometryY().doubleValue());
+                Point C = new InternalPoint2D(7203, next.geometryX().doubleValue(), next.geometryY().doubleValue());
+
+                var direct = PathDirectionalChecker.checkDirection(A, B , C);
+                direction.add(direct);
+            }
+        }
+        
+        return Response.ok(direction).status(200).build();
         
     }
 
@@ -174,7 +251,7 @@ public class AnchorResource {
 
         CustomRes res = dijsktra.getPath();
         
-        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns", null)).status(200).build();
         
     }
 }

@@ -77,7 +77,7 @@ public class DFS extends Algo{
             trackNode = graph.get(parent.get(trackNode.getId()));
         }
 
-        return new CustomRes(distance.get(endNode.getId()), anchors, "");
+        return new CustomRes(distance.get(endNode.getId()), anchors, "",null);
     }
 
 
