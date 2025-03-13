@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AnchorPathDTO {
     private String Id;
-    private String LevelId;
+    private String Ordinal;
     private Point Geometry;
     private double distance;
 
@@ -26,8 +26,8 @@ public class AnchorPathDTO {
         return Id;
     }
 
-    public String getLevelId() {
-        return LevelId;
+    public String getOrdinal() {
+        return Ordinal;
     }
 
     public Point getGeometry() {
@@ -42,8 +42,8 @@ public class AnchorPathDTO {
         Id = id;
     }
 
-    public void setLevelId(String levelId) {
-        LevelId = levelId;
+    public void setOrdinal(String Ordinal) {
+        this.Ordinal = Ordinal;
     }
 
     public void setGeometry(Point geometry) {

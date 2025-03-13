@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  db:
+    image: neo4j # Use the latest official Neo4j image
+    container_name: neo4j-db
+    env_file:
+      - .env # Configure Neo4j
+    ports:
+      - '7474:7474' # Neo4j web interface
+      - '7687:7687' # Bolt protocol
+    networks:
+      - ctu_net
+    restart: unless-stopped
+    volumes:
+      - db:/data # Persist Neo4j data
+      - db-logs:/logs
+      - db-conf:/var/lib/neo4j/conf
+    environment:
+      - NEO4J_AUTH=${NEO4J_AUTH}
+
+  server:
+    image: vu0cay/ctu-routing-service:latest
+    container_name: server_bee
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - '8081:8081'
+    volumes:
+      - './:/src'
+    networks:
+      - ctu_net
+
+networks:
+  ctu_net:
+    name: ctu_net
+    attachable: true
+    driver: bridge
+
+volumes:
+  db:
+  db-logs:
+  db-conf:
+  server:

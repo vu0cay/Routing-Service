@@ -32,10 +32,11 @@ public class Anchor {
     private Long entity_Id;
     
     private String id;
-    private String feature_type;
-    private String type;
-    private String unit_id; 
-    private String level_id;
+    // private String feature_type;
+    // private String type;
+    // private String unit_id; 
+    // private String level_id;
+    private int ordinal;
     public org.neo4j.driver.types.Point geometry;
 
     @JsonIgnore
@@ -50,20 +51,10 @@ public class Anchor {
         return id;
     }
 
-    public String getFeature_type() {
-        return feature_type;
-    }
+   
 
-    public String getType() {
-        return type;
-    }
-
-    public String getUnit_id() {
-        return unit_id;
-    }
-
-    public String getLevel_id() {
-        return level_id;
+    public int getOrdinal() {
+        return ordinal;
     }
 
     public org.neo4j.driver.types.Point getGeometry() {
@@ -82,20 +73,10 @@ public class Anchor {
         this.id = id;
     }
 
-    public void setFeature_type(String feature_type) {
-        this.feature_type = feature_type;
-    }
+    
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setUnit_id(String unit_id) {
-        this.unit_id = unit_id;
-    }
-
-    public void setLevel_id(String level_id) {
-        this.level_id = level_id;
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
     }
 
     public void setGeometry(Point geometry) {

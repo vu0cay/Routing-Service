@@ -57,7 +57,7 @@ public class AnchorService {
                 var direct = PathDirectionalChecker.checkDirection(A, B , C);
                 tmp = direct;
             }
-            responsePath.add(new AnchorPath(path.id(), path.levelId(), path.geometryX(), path.geometryY(), path.distanceFromStartNode(), tmp));
+            responsePath.add(new AnchorPath(path.id(), path.ordinal(), path.geometryX(), path.geometryY(), path.distanceFromStartNode(), tmp));
         }
 
         return responsePath;

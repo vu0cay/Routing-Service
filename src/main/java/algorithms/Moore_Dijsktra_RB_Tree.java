@@ -93,7 +93,7 @@ public class Moore_Dijsktra_RB_Tree extends Algo{
         AnchorDTO trackNode = new AnchorDTO(endNode);
         while(true) {
             Point point = trackNode.getGeometry();
-            anchors.add(new AnchorPath(trackNode.getId(), trackNode.getLevelId(),BigDecimal.valueOf(point.x()),BigDecimal.valueOf(point.y()), BigDecimal.valueOf(distance.get(trackNode.getId())), "undefined"));
+            anchors.add(new AnchorPath(trackNode.getId(), trackNode.getOrdinal(),BigDecimal.valueOf(point.x()),BigDecimal.valueOf(point.y()), BigDecimal.valueOf(distance.get(trackNode.getId())), "undefined"));
             if(parent.get(trackNode.getId()).equals("")) break;
             trackNode = graph.get(parent.get(trackNode.getId()));
         }

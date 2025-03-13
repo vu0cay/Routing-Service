@@ -15,12 +15,12 @@ public class PathDirectionalChecker {
     public static String checkDirection(Point A, Point B, Point C) {
         double crossProduct = (B.x() - A.x()) * (C.y() - B.y()) - (B.y() - A.y()) * (C.x() - B.x());
 
-        if (crossProduct > 0) {
-            return "Turn Right";
+        if (Math.abs(crossProduct) < 5) {
+            return "Go Straight";  // Within the tolerance range
         } else if (crossProduct < 0) {
-            return "Turn Left";
+            return "Turn Left";  // Counterclockwise
         } else {
-            return "Go Straight";
+            return "Turn Right"; // Clockwise
         }
     }
 
