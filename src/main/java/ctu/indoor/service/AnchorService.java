@@ -31,7 +31,7 @@ import jakarta.inject.Inject;
 public class AnchorService {
     @Inject
     Session session;
- 
+    @Inject LoggingExelService exelService;
     public List<Anchor> findAll() {
         return (List<Anchor>) session.loadAll(Anchor.class);
     }
@@ -71,10 +71,15 @@ public class AnchorService {
 
         Moore_Dijsktra dijsktra = new Moore_Dijsktra(graph,graph.get(startNode) , graph.get(endNode));
         
-        long startTime = System.nanoTime();
+        // System.gc();
+        long startTime = System.currentTimeMillis();
         dijsktra.execute();        
-        long endTime = System.nanoTime();
+        long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
+
+        exelService.logExecutionTime("executeDijkstra", duration);
+
+
 
         // get row result that doesn't attach duration
         CustomRes result = dijsktra.getPath();
@@ -83,7 +88,7 @@ public class AnchorService {
         // add direction to the reponse's path
         var responsePath = pathDirectional(paths);
         // create new record that have duration and path direction
-        return new CustomRes(result.totalDistance(),responsePath,duration + " ns");
+        return new CustomRes(result.totalDistance(),responsePath,duration + " ms");
         
     }
 

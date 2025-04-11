@@ -79,15 +79,15 @@ public class AnchorResource {
         
         
         DFS dfs = new DFS(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
-        
-        long startTime = System.nanoTime();
+        // System.gc();
+        long startTime = System.currentTimeMillis();
         dfs.execute();        
-        long endTime = System.nanoTime();
+        long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
 
         CustomRes res = dfs.getPath();
         
-        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ms")).status(200).build();
         
     }
 
@@ -110,14 +110,15 @@ public class AnchorResource {
         
         BFS bfs = new BFS(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
         
-        long startTime = System.nanoTime();
+        // System.gc();
+        long startTime = System.currentTimeMillis();
         bfs.execute();        
-        long endTime = System.nanoTime();
+        long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
 
         CustomRes res = bfs.getPath();
         
-        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ms")).status(200).build();
         
     }
 
@@ -208,14 +209,15 @@ public class AnchorResource {
         
         Moore_Dijsktra_RB_Tree dijsktra = new Moore_Dijsktra_RB_Tree(graph,graph.get(requestDTO.getStartNode()) , graph.get(requestDTO.getEndNode()));
         
-        long startTime = System.nanoTime();
+        // System.gc();
+        long startTime = System.currentTimeMillis();
         dijsktra.execute();        
-        long endTime = System.nanoTime();
+        long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
 
         CustomRes res = dijsktra.getPath();
         
-        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ns")).status(200).build();
+        return Response.ok(new CustomRes(res.totalDistance(),res.paths(),duration + " ms")).status(200).build();
         
     }
 }

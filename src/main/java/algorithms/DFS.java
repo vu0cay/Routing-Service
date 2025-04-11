@@ -36,14 +36,17 @@ public class DFS extends Algo{
 
 
     public void execute() {
+        
         graph.keySet().forEach(key -> {
             mark.put(key, NOT_VISITED);
-            distance.put(key, (double)0);
+            distance.put(key, Double.MAX_VALUE);
             parent.put(key, "");
         });
         
         Stack<AnchorDTO> st = new Stack<>();
         st.push(startNode);
+        distance.put(startNode.getId(), 0.0);
+        mark.put(startNode.getId(), VISITED);
 
         while(!st.isEmpty()) {
             AnchorDTO processingNode = st.pop();
@@ -55,12 +58,14 @@ public class DFS extends Algo{
 
                 if(mark.get(neigborNode.getId()) == NOT_VISITED) {
                     st.push(new AnchorDTO(neigborNode));
+                    mark.put(neigborNode.getId(), VISITED);
+
                     parent.put(neigborNode.getId(), processingNode.getId());
                     distance.put(neigborNode.getId(), distance.get(processingNode.getId()) + weight);
                 }
             });
 
-            mark.put(processingNode.getId(), VISITED);
+            // mark.put(processingNode.getId(), VISITED);
         }
 
 
