@@ -16,11 +16,11 @@ public class PathDirectionalChecker {
         double crossProduct = (B.x() - A.x()) * (C.y() - B.y()) - (B.y() - A.y()) * (C.x() - B.x());
 
         if (Math.abs(crossProduct) < 5) {
-            return "Go Straight";  // Within the tolerance range
+            return "Đi thẳng";  // Within the tolerance range
         } else if (crossProduct < 0) {
-            return "Turn Left";  // Counterclockwise
+            return "Quẹo trái";  // Counterclockwise
         } else {
-            return "Turn Right"; // Clockwise
+            return "Quẹo phải"; // Clockwise
         }
     }
 

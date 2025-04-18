@@ -42,9 +42,9 @@ public class AnchorService {
             String tmp;
             AnchorPath path = paths.get(index);
             if(index == paths.size() - 1) {
-                tmp = "Go straight";
+                tmp = "Đi thẳng";
             } else if(index == 0) {
-                tmp = "Finish";
+                tmp = "Kết thúc";
             }
             else{
                 var previous = paths.get(index - 1);
